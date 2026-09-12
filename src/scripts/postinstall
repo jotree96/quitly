@@ -1,0 +1,75 @@
+#!/bin/bash
+# Quitly: läuft nach dem Auspacken des Payloads, als root.
+# Aufgabe: Lua-Dateien in das Benutzerverzeichnis legen, eine
+# vorhandene Hammerspoon-Konfiguration nicht zerstören, App starten.
+
+set -u
+
+TARGET_VOLUME="${3:-/}"
+if [ "$TARGET_VOLUME" = "/" ]; then
+    TARGET_VOLUME=""
+fi
+
+SRC="$TARGET_VOLUME/Library/Application Support/Quitly"
+
+log() { echo "[Quitly] $*"; }
+
+# Angemeldeten Benutzer ermitteln. Das Postinstall läuft als root,
+# die Konfiguration gehört aber in dessen Heimatverzeichnis.
+CONSOLE_USER=$(/usr/bin/stat -f%Su /dev/console 2>/dev/null)
+if [ -z "$CONSOLE_USER" ] || [ "$CONSOLE_USER" = "root" ] || [ "$CONSOLE_USER" = "loginwindow" ]; then
+    log "Kein angemeldeter Benutzer gefunden. Hammerspoon liegt in /Applications, die Konfiguration fehlt noch."
+    exit 0
+fi
+
+USER_UID=$(/usr/bin/id -u "$CONSOLE_USER" 2>/dev/null)
+USER_HOME=$(/usr/bin/dscl . -read "/Users/$CONSOLE_USER" NFSHomeDirectory 2>/dev/null | /usr/bin/sed 's/^NFSHomeDirectory: //')
+if [ -z "$USER_HOME" ] || [ ! -d "$USER_HOME" ]; then
+    USER_HOME="/Users/$CONSOLE_USER"
+fi
+
+HS_DIR="$USER_HOME/.hammerspoon"
+Q_DIR="$HS_DIR/quitly"
+INIT="$HS_DIR/init.lua"
+MARKER="-- >>> Quitly"
+
+log "Benutzer: $CONSOLE_USER, Ziel: $Q_DIR"
+
+/bin/mkdir -p "$Q_DIR" || exit 1
+/bin/cp -f "$SRC/window_overview.lua" "$Q_DIR/window_overview.lua" || exit 1
+/bin/cp -f "$SRC/welcome.lua"         "$Q_DIR/welcome.lua"         || exit 1
+/bin/cp -f "$SRC/init.lua"            "$Q_DIR/init.lua"            || exit 1
+/bin/cp -f "$SRC/uninstall.sh"        "$Q_DIR/uninstall.sh"        2>/dev/null
+/bin/chmod 755 "$Q_DIR/uninstall.sh" 2>/dev/null
+
+# Willkommensfenster soll nach jeder Installation wieder erscheinen
+/bin/rm -f "$Q_DIR/.welcome_done"
+
+# init.lua: neu anlegen oder den Quitly-Block einmalig anhängen.
+# Eine bestehende Konfiguration bleibt unangetastet.
+read -r -d '' BLOCK <<'LUABLOCK'
+-- >>> Quitly <<< (Block nicht von Hand bearbeiten)
+dofile(hs.configdir .. "/quitly/init.lua")
+-- >>> Quitly Ende <<<
+LUABLOCK
+
+if [ ! -f "$INIT" ]; then
+    printf '%s\n' "$BLOCK" > "$INIT"
+    log "init.lua neu angelegt"
+elif ! /usr/bin/grep -qF -- "$MARKER" "$INIT"; then
+    /bin/cp -f "$INIT" "$INIT.vor-quitly.bak"
+    printf '\n%s\n' "$BLOCK" >> "$INIT"
+    log "Quitly an vorhandene init.lua angehängt, Sicherung unter init.lua.vor-quitly.bak"
+else
+    log "Quitly-Block war bereits vorhanden"
+fi
+
+/usr/sbin/chown -R "$CONSOLE_USER":staff "$HS_DIR"
+
+# Hammerspoon in der Sitzung des angemeldeten Benutzers starten
+if [ -n "$USER_UID" ]; then
+    /bin/launchctl asuser "$USER_UID" /usr/bin/open -a "$TARGET_VOLUME/Applications/Hammerspoon.app" >/dev/null 2>&1
+fi
+
+log "fertig"
+exit 0
