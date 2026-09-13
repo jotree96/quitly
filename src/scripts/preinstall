@@ -1,0 +1,8 @@
+#!/bin/bash
+# Quitly: läuft vor dem Auspacken des Payloads.
+# Hammerspoon muss beendet sein, sonst wird ein laufendes Bundle ersetzt.
+
+/usr/bin/pkill -x Hammerspoon >/dev/null 2>&1
+/bin/sleep 1
+
+exit 0

@@ -1,0 +1,10 @@
+# Build-Ergebnisse und Zwischenstände
+build/
+.cache/
+dist/
+*.pkg
+SHA256SUMS
+
+# macOS
+.DS_Store
+Claude outputs/

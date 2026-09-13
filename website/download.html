@@ -1,0 +1,84 @@
+<!--
+  Download-Abschnitt für die Website.
+  Zwei Stellen anpassen: DEIN-GITHUB-NAME im Link und die Prüfsumme.
+  Das Markup ist in sich geschlossen, alle Klassen sind mit ql- präfixiert.
+-->
+<section class="ql-download">
+  <div class="ql-inner">
+    <h2 class="ql-title">Quitly für macOS</h2>
+    <p class="ql-lead">Alle offenen Fenster auf einen Blick, jedes mit eigenem Schließen-Button. Ein Tastendruck statt Klicken durch jede App.</p>
+
+    <p class="ql-keys">
+      <kbd>⌘</kbd><kbd>⌥</kbd><kbd>⌃</kbd><kbd>M</kbd>
+    </p>
+
+    <p>
+      <a class="ql-btn" href="https://github.com/jotree96/quitly/releases/latest/download/Quitly.pkg">
+        Quitly laden
+      </a>
+      <span class="ql-meta">Version 1.0.0 · 9,1 MB · macOS 11 und neuer</span>
+    </p>
+
+    <div class="ql-note">
+      <h3>Beim ersten Öffnen meldet sich macOS</h3>
+      <p>Das Paket ist nicht bei Apple registriert. Es lässt sich trotzdem installieren:</p>
+      <ol>
+        <li>Doppelklick auf die geladene Datei, die Meldung wegklicken.</li>
+        <li>Systemeinstellungen öffnen, Datenschutz &amp; Sicherheit.</li>
+        <li>Ganz unten auf <b>Trotzdem öffnen</b> klicken.</li>
+      </ol>
+      <p class="ql-small">Auf macOS 14 und älter reicht ein Rechtsklick auf die Datei und dann <b>Öffnen</b>. Wer lieber das Terminal nutzt: <code>sudo installer -pkg ~/Downloads/Quitly.pkg -target /</code></p>
+    </div>
+
+    <details class="ql-details">
+      <summary>Was installiert wird</summary>
+      <ul>
+        <li><b>Hammerspoon</b> nach <code>/Applications</code>. Die Automatisierungs-Engine im Hintergrund, unverändert aus dem offiziellen Release, MIT-lizenziert.</li>
+        <li>Die Quitly-Konfiguration nach <code>~/.hammerspoon/quitly</code>. Eine vorhandene Hammerspoon-Konfiguration bleibt erhalten und wird vorher gesichert.</li>
+      </ul>
+      <p>Quitly braucht zwei Berechtigungen: Bedienungshilfen zum Schließen der Fenster, Bildschirmaufnahme für die Miniaturansichten. Nach der Installation öffnet sich ein Fenster mit zwei Knöpfen, die direkt dorthin führen.</p>
+      <p class="ql-small">Deinstallation: <code>bash ~/.hammerspoon/quitly/uninstall.sh</code></p>
+      <p class="ql-small">SHA-256: <code>cff3b8ae107f9fdc4cc34ed58238cd71d8b014844ded80f777844701476e906d</code></p>
+    </details>
+
+    <p class="ql-small">Quelltext und ältere Versionen auf <a href="https://github.com/jotree96/quitly">GitHub</a>.</p>
+  </div>
+</section>
+
+<style>
+.ql-download { padding: 48px 20px; }
+.ql-download .ql-inner { max-width: 680px; margin: 0 auto; line-height: 1.6; }
+.ql-download .ql-title { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.3px; }
+.ql-download .ql-lead { font-size: 17px; margin: 0 0 20px; }
+.ql-download .ql-keys { margin: 0 0 26px; display: flex; gap: 5px; }
+.ql-download kbd {
+  border: 1px solid rgba(128,128,128,0.35); border-radius: 6px;
+  padding: 4px 10px; font: 600 13px/1 ui-monospace, monospace;
+}
+.ql-download .ql-btn {
+  display: inline-block; background: #0a63c9; color: #fff; text-decoration: none;
+  padding: 12px 22px; border-radius: 8px; font-weight: 600;
+}
+.ql-download .ql-btn:hover { background: #0952a8; }
+.ql-download .ql-meta { display: inline-block; margin-left: 14px; opacity: 0.65; font-size: 13px; }
+.ql-download .ql-note {
+  margin: 28px 0 0; padding: 18px 20px;
+  border: 1px solid rgba(128,128,128,0.3); border-radius: 10px;
+}
+.ql-download .ql-note h3 { margin: 0 0 8px; font-size: 15px; }
+.ql-download .ql-note ol { margin: 0 0 10px; padding-left: 20px; }
+.ql-download .ql-note p { margin: 0 0 10px; }
+.ql-download .ql-details { margin-top: 20px; }
+.ql-download .ql-details summary { cursor: pointer; font-weight: 600; }
+.ql-download .ql-details ul { padding-left: 20px; }
+.ql-download code {
+  font: 12px/1.4 ui-monospace, monospace;
+  background: rgba(128,128,128,0.14); padding: 2px 6px; border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+.ql-download .ql-small { font-size: 13px; opacity: 0.75; }
+@media (max-width: 520px) {
+  .ql-download .ql-btn { display: block; text-align: center; }
+  .ql-download .ql-meta { display: block; margin: 10px 0 0; }
+}
+</style>
